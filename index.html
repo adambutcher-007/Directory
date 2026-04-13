@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adam's Games Directory!</title>
+    <!-- Playful Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Modern, Kid-Friendly UI --- */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --math-color: #ff6b81;
+            --math-light: #ffebf0;
+            --letter-color: #1dd1a1;
+            --letter-light: #e8fbf6;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fun floating background bubbles */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* --- Overlay to enable Audio --- */
+        #audio-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        #start-btn {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            padding: 20px 40px;
+            background-color: #ff9ff3;
+            color: white;
+            border: none;
+            border-radius: 50px; /* Highly rounded */
+            cursor: pointer;
+            box-shadow: 0 8px 0 #f368e0, var(--shadow);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        #start-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #f368e0, 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            text-align: center;
+            font-size: 3.5rem;
+            color: #5f27cd;
+            text-shadow: 3px 3px 0px #fff, 6px 6px 0px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+            animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .category-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.2rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 10px 25px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        /* --- Game Cards --- */
+        .card {
+            background: white;
+            border-radius: 30px; /* Highly rounded corners */
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 5px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* Math Card Styling */
+        .card.math {
+            border-color: var(--math-light);
+            background: linear-gradient(180deg, #ffffff 0%, var(--math-light) 100%);
+        }
+        .card.math:hover { border-color: var(--math-color); }
+        .card.math h2 { color: var(--math-color); }
+
+        /* Letter Card Styling */
+        .card.letter {
+            border-color: var(--letter-light);
+            background: linear-gradient(180deg, #ffffff 0%, var(--letter-light) 100%);
+        }
+        .card.letter:hover { border-color: var(--letter-color); }
+        .card.letter h2 { color: var(--letter-color); }
+
+        .emoji-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .emoji-icon {
+            transform: rotate(10deg) scale(1.2);
+        }
+
+        .card h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- CSS Background Bubbles -->
+    <div class="bubble" style="width: 150px; height: 150px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+    <div class="bubble" style="width: 80px; height: 80px; top: 70%; left: 80%; animation-delay: 1s;"></div>
+    <div class="bubble" style="width: 120px; height: 120px; top: 40%; left: 85%; animation-delay: 2s;"></div>
+    <div class="bubble" style="width: 200px; height: 200px; top: 80%; left: 5%; animation-delay: 3s;"></div>
+
+    <!-- Audio Permission Overlay (Browsers block audio until a user interaction occurs) -->
+    <div id="audio-overlay">
+        <h1 style="margin-bottom: 20px;">Ready to Play? 🎵</h1>
+        <button id="start-btn">Click to Start!</button>
+    </div>
+
+    <!-- Main Game Directory -->
+    <div class="container">
+        <h1>🚀 Awesome Kids Games! 🎮</h1>
+
+        <!-- Math Games Section -->
+        <h2 class="category-title">🔢 Math Games</h2>
+        <div class="grid">
+            <a href="https://adambutcher-007.github.io/NumberHunter/" target="_blank" rel="noopener" class="card math interactive">
+                <div class="emoji-icon">🏃‍♂️🔢</div>
+                <h2>Number Hunter</h2>
+                <p>Zip around dodging boulders and baddies to collect all numbers in this multiplication game!</p>
+            </a>
+
+            <a href="https://adambutcher-007.github.io/Time4Math/" target="_blank" rel="noopener" class="card math interactive">
+                <div class="emoji-icon">⏱️➕</div>
+                <h2>Time 4 Math</h2>
+                <p>Can you answer 10 math calculations under pressure?! The better you get, the bigger the reward!</p>
+            </a>
+        </div>
+
+        <!-- Letter Games Section -->
+        <h2 class="category-title">🔤 Letter Games</h2>
+        <div class="grid">
+            <a href="https://adambutcher-007.github.io/SpellsWell/SpellsWell.html" target="_blank" rel="noopener" class="card letter interactive">
+                <div class="emoji-icon">🧙‍♂️📖</div>
+                <h2>Spells Well</h2>
+                <p>Be challenged by a customizable list of words that may stump the best spellers!</p>
+            </a>
+
+            <a href="https://adambutcher-007.github.io/Colorbaloo/" target="_blank" rel="noopener" class="card letter interactive">
+                <div class="emoji-icon">🎨🎈</div>
+                <h2>Colorbaloo</h2>
+                <p>Do you know your letters, numbers, and colors? Put it to the test and earn points!</p>
+            </a>
+
+            <a href="https://adambutcher-007.github.io/TonesOfABC/" target="_blank" rel="noopener" class="card letter interactive">
+                <div class="emoji-icon">🎹🎶</div>
+                <h2>Tones Of ABC</h2>
+                <p>Feel the letters and hear the sounds of the classic ABCs song.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- WebAudio JavaScript -->
+    <script>
+        // Set up the Audio Context for Synthesized sounds
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            // Hide the overlay
+            const overlay = document.getElementById('audio-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 500);
+
+            // Play a happy startup sound
+            playClickSound(400, 800, 'sine', 0.2);
+        }
+
+        document.getElementById('start-btn').addEventListener('click', initAudio);
+
+        // Fun synth sound for hovering (Bubble pop effect)
+        function playHoverSound() {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            // Start low, ramp up high very quickly
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            
+            // Fade out very fast
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Happy synth sound for clicking (Boop / Ta-da effect)
+        function playClickSound(startFreq = 300, endFreq = 600, type = 'triangle', duration = 0.3) {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+            // Slide up to the end frequency
+            osc.frequency.exponentialRampToValueAtTime(endFreq, audioCtx.currentTime + duration);
+            
+            // Volume envelope
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // Attach event listeners to all game cards
+        const cards = document.querySelectorAll('.interactive');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', playHoverSound);
+            card.addEventListener('click', () => {
+                playClickSound(400, 1200, 'triangle', 0.4);
+            });
+        });
+    </script>
+</body>
+</html>
