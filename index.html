@@ -48,7 +48,7 @@
         #audio-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -73,6 +73,29 @@
         #start-btn:active {
             transform: translateY(8px);
             box-shadow: 0 0 0 #f368e0, 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- Floating Music Toggle --- */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            background-color: #1dd1a1;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            display: none; /* Shown after overlay is clicked */
+        }
+
+        .music-btn:hover {
+            transform: scale(1.05);
         }
 
         /* --- Main Content --- */
@@ -199,6 +222,9 @@
         <button id="start-btn">Click to Start!</button>
     </div>
 
+    <!-- Floating Music Toggle -->
+    <button id="music-toggle" class="music-btn">🎵 Music: ON</button>
+
     <!-- Main Game Directory -->
     <div class="container">
         <h1>🚀 Awesome Kids Games! 🎮</h1>
@@ -222,7 +248,7 @@
         <!-- Letter Games Section -->
         <h2 class="category-title">🔤 Letter Games</h2>
         <div class="grid">
-            <a href="https://adambutcher-007.github.io/SpellsWell/SpellsWell.html" target="_blank" rel="noopener" class="card letter interactive">
+            <a href="https://adambutcher-007.github.io/SpellsWell/" target="_blank" rel="noopener" class="card letter interactive">
                 <div class="emoji-icon">🧙‍♂️📖</div>
                 <h2>Spells Well</h2>
                 <p>Be challenged by a customizable list of words that may stump the best spellers!</p>
@@ -244,8 +270,8 @@
 
     <!-- WebAudio JavaScript -->
     <script>
-        // Set up the Audio Context for Synthesized sounds
         let audioCtx;
+        let musicGain; // Master volume node for the background music
 
         function initAudio() {
             if (!audioCtx) {
@@ -254,18 +280,107 @@
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+
+            // Create a volume node specifically for background music
+            musicGain = audioCtx.createGain();
+            musicGain.connect(audioCtx.destination);
+            musicGain.gain.setValueAtTime(1, audioCtx.currentTime);
             
-            // Hide the overlay
+            // Hide the overlay and reveal the music toggle
             const overlay = document.getElementById('audio-overlay');
             overlay.style.opacity = '0';
             setTimeout(() => overlay.style.display = 'none', 500);
+            document.getElementById('music-toggle').style.display = 'block';
 
             // Play a happy startup sound
             playClickSound(400, 800, 'sine', 0.2);
+
+            // Start the chill background music loop!
+            startBgMusic();
         }
 
         document.getElementById('start-btn').addEventListener('click', initAudio);
 
+        // --- BACKGROUND MUSIC GENERATOR ---
+        function startBgMusic() {
+            const loopLength = 8; // 8 seconds per loop
+            
+            function scheduleNotes(startTime) {
+                // A soft, happy, pentatonic chord progression (C - Am - F - G)
+                const pattern = [
+                    // Measure 1 (C Major vibe)
+                    {t: 0.0, f: 261.63}, // C4
+                    {t: 0.5, f: 329.63}, // E4
+                    {t: 1.0, f: 392.00}, // G4
+                    {t: 1.5, f: 329.63}, // E4
+                    // Measure 2 (A Minor vibe)
+                    {t: 2.0, f: 220.00}, // A3
+                    {t: 2.5, f: 261.63}, // C4
+                    {t: 3.0, f: 329.63}, // E4
+                    {t: 3.5, f: 261.63}, // C4
+                    // Measure 3 (F Major vibe)
+                    {t: 4.0, f: 174.61}, // F3
+                    {t: 4.5, f: 261.63}, // C4
+                    {t: 5.0, f: 349.23}, // F4
+                    {t: 5.5, f: 261.63}, // C4
+                    // Measure 4 (G Major vibe)
+                    {t: 6.0, f: 196.00}, // G3
+                    {t: 6.5, f: 293.66}, // D4
+                    {t: 7.0, f: 392.00}, // G4
+                    {t: 7.5, f: 293.66}  // D4
+                ];
+                
+                pattern.forEach(note => {
+                    const osc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    
+                    osc.type = 'triangle'; // Gives a soft music-box / chiptune sound
+                    osc.frequency.setValueAtTime(note.f, startTime + note.t);
+                    
+                    // Gentle plinking volume envelope
+                    noteGain.gain.setValueAtTime(0, startTime + note.t);
+                    noteGain.gain.linearRampToValueAtTime(0.03, startTime + note.t + 0.02); // kept low so it's not overpowering
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, startTime + note.t + 0.4);
+                    
+                    // Connect directly to our background music volume node
+                    osc.connect(noteGain);
+                    noteGain.connect(musicGain);
+                    
+                    osc.start(startTime + note.t);
+                    osc.stop(startTime + note.t + 0.4);
+                });
+            }
+            
+            // Schedule the first batch
+            let nextStartTime = audioCtx.currentTime + 0.2;
+            scheduleNotes(nextStartTime);
+            
+            // Keep checking and scheduling the next loop dynamically
+            setInterval(() => {
+                if (audioCtx.currentTime > nextStartTime + loopLength - 1) {
+                    nextStartTime += loopLength;
+                    scheduleNotes(nextStartTime);
+                }
+            }, 1000);
+        }
+
+        // --- MUSIC TOGGLE BUTTON ---
+        let musicOn = true;
+        const toggleBtn = document.getElementById('music-toggle');
+        toggleBtn.addEventListener('click', () => {
+            musicOn = !musicOn;
+            if (musicOn) {
+                musicGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 0.3);
+                toggleBtn.innerText = '🎵 Music: ON';
+                toggleBtn.style.background = '#1dd1a1';
+            } else {
+                musicGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                toggleBtn.innerText = '🔇 Music: OFF';
+                toggleBtn.style.background = '#ff6b81';
+            }
+        });
+
+        // --- INTERACTIVE SOUND EFFECTS ---
         // Fun synth sound for hovering (Bubble pop effect)
         function playHoverSound() {
             if (!audioCtx || audioCtx.state !== 'running') return;
@@ -274,16 +389,14 @@
             const gain = audioCtx.createGain();
             
             osc.type = 'sine';
-            // Start low, ramp up high very quickly
             osc.frequency.setValueAtTime(300, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
             
-            // Fade out very fast
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
             
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(audioCtx.destination); // Connects to master output, unmuted by the music toggle
             
             osc.start();
             osc.stop(audioCtx.currentTime + 0.1);
@@ -298,10 +411,8 @@
             
             osc.type = type;
             osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
-            // Slide up to the end frequency
             osc.frequency.exponentialRampToValueAtTime(endFreq, audioCtx.currentTime + duration);
             
-            // Volume envelope
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             
