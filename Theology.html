@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>The Study Table — A Treasury of Biblical Journeys</title>
+<style>
+  :root{
+    --bg:#0c0f14;
+    --bg2:#11161f;
+    --panel:#161d28;
+    --panel2:#1b2433;
+    --line:rgba(198,160,94,0.22);
+    --gold:#c6a05e;
+    --gold-bright:#e6c989;
+    --ink:#e8e6e0;
+    --muted:#9aa3b0;
+    --shadow:0 18px 50px rgba(0,0,0,0.55);
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(198,160,94,0.10), transparent 60%),
+      radial-gradient(900px 600px at 90% 110%, rgba(70,110,150,0.10), transparent 55%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* subtle texture */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:0.5;mix-blend-mode:overlay;
+    background-image:radial-gradient(rgba(255,255,255,0.03) 1px,transparent 1px);
+    background-size:3px 3px;
+  }
+
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(18px,5vw,40px) 80px}
+
+  /* ---------- Header ---------- */
+  header{text-align:center;margin-bottom:clamp(34px,6vw,60px);position:relative}
+  .kicker{
+    font-family:var(--sans);letter-spacing:0.42em;text-transform:uppercase;
+    font-size:11px;color:var(--gold);font-weight:600;margin-bottom:18px;opacity:0;
+    animation:rise .9s ease .1s forwards;
+  }
+  .crest{
+    width:60px;height:60px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);border-radius:50%;color:var(--gold-bright);font-size:26px;
+    background:radial-gradient(circle at 50% 30%,rgba(198,160,94,0.18),transparent 70%);
+    box-shadow:inset 0 0 24px rgba(198,160,94,0.10);opacity:0;animation:rise .9s ease 0s forwards;
+  }
+  h1{
+    font-family:var(--serif);font-weight:600;letter-spacing:0.01em;line-height:1.05;
+    font-size:clamp(34px,7vw,62px);
+    background:linear-gradient(180deg,#fff,var(--gold-bright) 140%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    opacity:0;animation:rise .9s ease .15s forwards;
+  }
+  .verse{
+    font-family:var(--serif);font-style:italic;color:var(--muted);
+    font-size:clamp(15px,2.4vw,19px);margin-top:18px;max-width:620px;margin-left:auto;margin-right:auto;
+    opacity:0;animation:rise .9s ease .28s forwards;
+  }
+  .verse span{color:var(--gold);font-style:normal;font-size:0.82em;letter-spacing:0.04em}
+  .rule{
+    width:120px;height:1px;margin:26px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:0;animation:rise .9s ease .36s forwards;
+  }
+
+  /* ---------- Cards ---------- */
+  .grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(16px,2.6vw,26px);margin-top:clamp(34px,6vw,56px);
+  }
+  @media (max-width:720px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    position:relative;display:block;text-decoration:none;color:inherit;overflow:hidden;
+    background:linear-gradient(165deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-radius:18px;padding:30px 28px 26px;
+    box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
+    opacity:0;transform:translateY(22px);
+  }
+  .card.in{animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+  .card:nth-child(1){animation-delay:.42s}
+  .card:nth-child(2){animation-delay:.5s}
+  .card:nth-child(3){animation-delay:.58s}
+  .card:nth-child(4){animation-delay:.66s}
+  .card::after{ /* gold sheen */
+    content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(230,201,137,0.10),transparent);
+    transform:skewX(-18deg);transition:left .7s ease;
+  }
+  .card:hover{transform:translateY(-7px);border-color:rgba(198,160,94,0.55);
+    box-shadow:0 26px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(198,160,94,0.18)}
+  .card:hover::after{left:130%}
+  .card:active{transform:translateY(-2px) scale(.995)}
+
+  .card .top{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+  .ico{
+    flex:0 0 auto;width:54px;height:54px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    font-size:26px;color:var(--gold-bright);
+    background:radial-gradient(circle at 50% 30%,rgba(198,160,94,0.22),rgba(198,160,94,0.04));
+    border:1px solid var(--line);transition:transform .35s, box-shadow .35s;
+  }
+  .card:hover .ico{transform:scale(1.08) rotate(-3deg);box-shadow:0 0 22px rgba(198,160,94,0.25)}
+  .tag{font-size:10.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .card h2{font-family:var(--serif);font-size:clamp(21px,3vw,26px);font-weight:600;margin-top:3px;line-height:1.12}
+  .card p{color:var(--muted);font-size:14.5px;line-height:1.6;margin-top:2px;min-height:44px}
+  .meta{display:flex;align-items:center;justify-content:space-between;margin-top:20px;
+    padding-top:16px;border-top:1px solid rgba(255,255,255,0.06)}
+  .stat{font-size:12.5px;color:var(--muted)}
+  .stat b{color:var(--ink);font-weight:600}
+  .enter{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--gold-bright);
+    letter-spacing:0.03em;transition:gap .3s}
+  .card:hover .enter{gap:13px}
+  .enter svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+  /* ---------- Footer / sound bar ---------- */
+  footer{text-align:center;margin-top:clamp(46px,7vw,72px);color:var(--muted);font-size:12.5px;line-height:1.8}
+  footer .latin{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:14px}
+
+  .soundbar{
+    position:fixed;right:18px;bottom:18px;z-index:20;display:flex;gap:10px;align-items:center;
+  }
+  .sbtn{
+    display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:12.5px;font-weight:600;
+    color:var(--ink);background:linear-gradient(165deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-radius:999px;padding:11px 16px;cursor:pointer;
+    box-shadow:var(--shadow);transition:transform .25s,border-color .25s,color .25s;backdrop-filter:blur(6px);
+  }
+  .sbtn:hover{transform:translateY(-2px);border-color:rgba(198,160,94,0.55)}
+  .sbtn .dot{width:8px;height:8px;border-radius:50%;background:#5a6472;transition:background .25s,box-shadow .25s}
+  .sbtn.on .dot{background:var(--gold-bright);box-shadow:0 0 10px var(--gold-bright)}
+
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .card,.kicker,.crest,h1,.verse,.rule{opacity:1!important;transform:none!important}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="crest">✶</div>
+      <div class="kicker">A Treasury of Biblical Journeys</div>
+      <h1>The Study Table</h1>
+      <p class="verse">"Thy word is a lamp unto my feet, and a light unto my path."<br><span>— Psalm 119:105</span></p>
+      <div class="rule"></div>
+    </header>
+
+    <main class="grid" id="grid">
+
+      <a class="card" href="https://adambutcher-007.github.io/SummerStudy2026/" target="_blank" rel="noopener">
+        <div class="top">
+          <div class="ico">🧭</div>
+          <div>
+            <div class="tag">Worldview · Study</div>
+            <h2>Summer of Truth Project 2026</h2>
+          </div>
+        </div>
+        <p>Twelve weeks, twelve foundational questions — a guided journey through a biblical worldview with Dr. Del Tackett.</p>
+        <div class="meta">
+          <span class="stat"><b>13</b> sessions · Wednesdays</span>
+          <span class="enter">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="https://adambutcher-007.github.io/Quid_est_veritas/" target="_blank" rel="noopener">
+        <div class="top">
+          <div class="ico">📜</div>
+          <div>
+            <div class="tag">Reflection · Daily</div>
+            <h2>Quid est Veritas?</h2>
+          </div>
+        </div>
+        <p>"What is truth?" A treasury of 300 truths — reveal one at a time for meditation and discussion.</p>
+        <div class="meta">
+          <span class="stat"><b>300</b> truths · John 18:38</span>
+          <span class="enter">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="https://adambutcher-007.github.io/HeartVerses/" target="_blank" rel="noopener">
+        <div class="top">
+          <div class="ico">❤︎</div>
+          <div>
+            <div class="tag">Memory · Practice</div>
+            <h2>Heart Verses</h2>
+          </div>
+        </div>
+        <p>Hide the Word in your heart through reading, writing, listening, and doing — Scripture memory, four ways.</p>
+        <div class="meta">
+          <span class="stat"><b>4</b> learning styles</span>
+          <span class="enter">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card" href="https://adambutcher-007.github.io/kings-infographic/kings-of-the-kingdom.html" target="_blank" rel="noopener">
+        <div class="top">
+          <div class="ico">♛</div>
+          <div>
+            <div class="tag">History · Timeline</div>
+            <h2>Kings of the Kingdom</h2>
+          </div>
+        </div>
+        <p>An interactive chronicle of Israel &amp; Judah — every reign from the united monarchy to exile, mapped on one timeline.</p>
+        <div class="meta">
+          <span class="stat"><b>42</b> kings · 1050–586 BCE</span>
+          <span class="enter">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+    </main>
+
+    <footer>
+      <div class="latin">Sola Scriptura</div>
+      <div>Four studies · one table. Choose a path to begin.</div>
+    </footer>
+  </div>
+
+  <div class="soundbar">
+    <button class="sbtn on" id="fxBtn" title="Toggle interface sounds"><span class="dot"></span>Sounds</button>
+    <button class="sbtn" id="ambBtn" title="Toggle ambient pad"><span class="dot"></span>Ambient</button>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ctx = null, master = null;
+  var fxOn = true, ambOn = false, ambNodes = null;
+
+  function ensure(){
+    if(ctx) return;
+    ctx = new AC();
+    master = ctx.createGain();
+    master.gain.value = 0.9;
+    master.connect(ctx.destination);
+  }
+  function resume(){ if(ctx && ctx.state === "suspended") ctx.resume(); }
+
+  // gentle tonal blip with soft attack/decay (no harsh clicks)
+  function tone(freq, dur, type, vol, when){
+    ensure();
+    var t0 = (when||ctx.currentTime);
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol||0.12, t0+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    o.connect(g); g.connect(master);
+    o.start(t0); o.stop(t0+dur+0.02);
+  }
+
+  function hover(){ if(!fxOn) return; resume(); tone(660,0.10,"sine",0.06); }
+  // a warm two-note "chime" for clicks, like a soft bell
+  function chime(){
+    if(!fxOn) return; resume(); ensure();
+    var now = ctx.currentTime;
+    tone(523.25,0.5,"triangle",0.10,now);       // C5
+    tone(783.99,0.7,"sine",0.08,now+0.06);       // G5
+    tone(1046.5,0.9,"sine",0.05,now+0.14);       // C6 shimmer
+  }
+
+  // ---- Ambient pad: slow detuned drone, very low volume ----
+  function startAmbient(){
+    ensure(); resume();
+    if(ambNodes) return;
+    var g = ctx.createGain(); g.gain.value = 0.0; g.connect(master);
+    var filt = ctx.createBiquadFilter(); filt.type="lowpass"; filt.frequency.value=900; filt.connect(g);
+    var freqs = [110, 164.81, 220]; // A2, E3, A3 — open fifth, calm
+    var oscs = freqs.map(function(f,i){
+      var o=ctx.createOscillator(); o.type = i===2?"sine":"triangle";
+      o.frequency.value=f; o.detune.value=(i-1)*4; o.connect(filt); o.start(); return o;
+    });
+    // slow LFO on filter for movement
+    var lfo=ctx.createOscillator(); lfo.frequency.value=0.05;
+    var lg=ctx.createGain(); lg.gain.value=260; lfo.connect(lg); lg.connect(filt.frequency); lfo.start();
+    g.gain.exponentialRampToValueAtTime(0.05, ctx.currentTime+2.5);
+    ambNodes={g:g,oscs:oscs,lfo:lfo,filt:filt,lg:lg};
+  }
+  function stopAmbient(){
+    if(!ambNodes) return;
+    var n=ambNodes; ambNodes=null;
+    try{
+      n.g.gain.cancelScheduledValues(ctx.currentTime);
+      n.g.gain.setValueAtTime(n.g.gain.value, ctx.currentTime);
+      n.g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+1.2);
+      setTimeout(function(){ n.oscs.forEach(function(o){try{o.stop()}catch(e){}}); try{n.lfo.stop()}catch(e){} },1400);
+    }catch(e){}
+  }
+
+  // ---- Wire up cards ----
+  var cards = document.querySelectorAll(".card");
+  cards.forEach(function(c){
+    c.addEventListener("mouseenter", hover);
+    c.addEventListener("click", function(e){
+      if(!fxOn) return;
+      // let the soft chime play, then open
+      e.preventDefault();
+      var href=c.getAttribute("href");
+      chime();
+      setTimeout(function(){ window.open(href,"_blank","noopener"); }, 230);
+    });
+  });
+
+  // reveal animation trigger
+  cards.forEach(function(c){ c.classList.add("in"); });
+
+  // ---- Buttons ----
+  var fxBtn=document.getElementById("fxBtn"), ambBtn=document.getElementById("ambBtn");
+  fxBtn.addEventListener("click", function(){
+    fxOn=!fxOn; fxBtn.classList.toggle("on",fxOn);
+    if(fxOn){ resume(); tone(880,0.12,"sine",0.07); }
+  });
+  ambBtn.addEventListener("click", function(){
+    ambOn=!ambOn; ambBtn.classList.toggle("on",ambOn);
+    if(ambOn) startAmbient(); else stopAmbient();
+  });
+
+  // unlock audio on first interaction (browser autoplay policy)
+  document.addEventListener("pointerdown", function once(){ ensure(); resume(); document.removeEventListener("pointerdown",once); });
+})();
+</script>
+</body>
+</html>
